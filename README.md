@@ -1,0 +1,2 @@
+# thaipy-duckdb
+thaipy-duckdb
