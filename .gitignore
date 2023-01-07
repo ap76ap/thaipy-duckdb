@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Ensure files that get build are not mistakenly committed
+public/slides/index.html
