@@ -4,6 +4,8 @@ Given an intro talk to what **DuckDB** is and how it can be used with Python.
 
 _Talk first delivered to ThaiPy Meetup on 19-Jan-2023._
 
+**Presentation Slides are here:** [thaipy-duckkdb-presentation](https://ap76ap.github.io/thaipy-duckdb/slides)
+
 ## Tools used to deliver the presentation
 ### To create slideshow using MARP
 - [Marp - github](https://github.com/marp-team/marp-cli)

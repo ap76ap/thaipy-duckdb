@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: gaia
+theme: uncover
 author: Andrew Purser
 size: 16:9
 style: |
