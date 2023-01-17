@@ -504,9 +504,9 @@ print(rowset.fetch_df().to_markdown())
 
 - Poor Man's Data Lake (https://dagster.io/blog/duckdb-data-lake)
 ---
+<!-- _header: the final quack..... -->
 <!-- _footer: From: https://chat.openai.com/chat -->
 <style scoped>section { font-size: 28px; }</style>
-
 
 **Would Donald Duck use DuckDB for analytics?**
 
