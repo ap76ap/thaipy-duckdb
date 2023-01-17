@@ -1,18 +1,21 @@
 ---
 marp: true
-theme: gaia
+theme: uncover
 author: Andrew Purser
 size: 16:9
+
 ---
+
 
 ![bg left:25%](https://picsum.photos/501/)
 <!-- _class: lead -->
-# DuckDB - What's all the hype!
+### DuckDB - What's all the hype!
 
-### An intro to using DuckDB with Python
+##### An intro to using DuckDB with Python
 
 
-https://ap76ap.github.io/thaipy-duckdb/slides/
+###### https://ap76ap.github.io/thaipy-duckdb/slides/
+
 
 ---
 <!-- _header: agenda -->

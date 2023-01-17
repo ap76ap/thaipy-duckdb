@@ -37,6 +37,9 @@ jobs:
           node-version: 16
       - run: npx @marp-team/marp-cli@latest ./slides/slideshow.md -o ./public/slides/index.html
 
+      - name: Copy Slide Images to Public
+        run: cp ./slides/*.png ./public/
+
       - name: Setup Pages
         uses: actions/configure-pages@v2
 
