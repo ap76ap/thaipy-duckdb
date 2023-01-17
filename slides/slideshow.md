@@ -6,7 +6,6 @@ size: 16:9
 
 ---
 
-
 ![bg left:25%](https://picsum.photos/501/)
 <!-- _class: lead -->
 ### DuckDB - What's all the hype!
@@ -23,15 +22,16 @@ size: 16:9
 - About Me
 - DuckDB - What is it?
 - Install DuckDB
-- Level 1 : CSV
+- Level One : CSV
 - Data Lake Storage - Super Quick Primer
-- Level 2 : Parquet
-- Level 3 : Parquet - against Cloud Storage
-- Level 4 : Data Lake Engine
+- Level Two : Parquet
+- Level Three : Parquet - Against Cloud Storage
+- Other things to explore
 
 ---
-<!-- _backgroundColor: white -->
-![bg fit](./aboutme.png)
+
+<!-- _header: About Me - Andrew Purser -->
+![bg 80%](./aboutme.png)
 
 
 ---
@@ -51,7 +51,7 @@ size: 16:9
 ![bg left:25%](https://picsum.photos/502/)
 <!-- _class: lead -->
 
-### let's get it installed and take a look and kick the tyres!
+### let's get it installed and kick the tyres!
 
 
 ---
@@ -59,7 +59,7 @@ size: 16:9
 <!-- _header: install -->
 ``` bash
 
-pip install duckdb
+> pip install duckdb
 
 Collecting duckdb
   Downloading 
@@ -87,6 +87,14 @@ print(cursor.execute('SELECT 42').fetchall())
 [(42,)]
 
 ```
+
+--- 
+![bg left:25%](https://picsum.photos/505/)
+<!-- _class: lead -->
+
+### Time for Level one - CSV
+
+
 ---
 <!-- _header: Titanic  -->
 <!-- _footer: From: https://www.kaggle.com/c/titanic -->
@@ -94,15 +102,34 @@ print(cursor.execute('SELECT 42').fetchall())
 ![bg 80%](./kaggletitanic.png)
 
 ---
+<!-- _header: train.csv  -->
+
+``` python
+PassengerId,Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
+1,0,3,"Braund, Mr. Owen Harris",male,22,1,0,A/5 21171,7.25,,S
+2,1,1,"Cumings, Mrs. John Bradley (Florence Briggs Thayer)",female,38,1,0,PC 17599,71.2833,C85,C
+3,1,3,"Heikkinen, Miss. Laina",female,26,0,0,STON/O2. 3101282,7.925,,S
+4,1,1,"Futrelle, Mrs. Jacques Heath (Lily May Peel)",female,35,1,0,113803,53.1,C123,S
+5,0,3,"Allen, Mr. William Henry",male,35,0,0,373450,8.05,,S
+6,0,3,"Moran, Mr. James",male,,0,0,330877,8.4583,,Q
+7,0,1,"McCarthy, Mr. Timothy J",male,54,0,0,17463,51.8625,E46,S
+8,0,3,"Palsson, Master. Gosta Leonard",male,2,3,1,349909,21.075,,S
+9,1,3,"Johnson, Mrs. Oscar W (Elisabeth Vilhelmina Berg)",female,27,0,2,347742,11.1333,,S
+10,1,2,"Nasser, Mrs. Nicholas (Adele Achem)",female,14,1,0,237736,30.0708,,C
+11,1,3,"Sandstrom, Miss. Marguerite Rut",female,4,1,1,PP 9549,16.7,G6,S
+12,1,1,"Bonnell, Miss. Elizabeth",female,58,0,0,113783,26.55,C103,S
+13,0,3,"Saundercock, Mr. William Henry",male,20,0,0,A/5. 2151,8.05,,S
+14,0,3,"Andersson, Mr. Anders Johan",male,39,1,5,347082,31.275,,S
+```
+---
 <!-- _header: level one -->
+
 
 ``` python
 rowset = cursor.execute("SELECT COUNT(*) FROM './data/train.csv';")
 rowset.fetchall()
 [(891,)]
-```
 
-``` python
 rowset = cursor.execute("SELECT * FROM './data/train.csv' LIMIT 1;")
 rowset.fetchall()
 [(1,
@@ -135,7 +162,8 @@ rowset.description
  ('Cabin', 'STRING', None, None, None, None, None),
  ('Embarked', 'STRING', None, None, None, None, None)]
 ```
-```
+
+``` python
 rowset.fetch_df()
    PassengerId  Survived  Pclass                     Name   Sex   Age  SibSp  Parch     Ticket  Fare Cabin Embarked
 0            1         0       3  Braund, Mr. Owen Harris  male  22.0      1      0  A/5 21171  7.25   NaN        S
@@ -184,8 +212,6 @@ rowset.fetch_df()
 
 ### Super Quick Data Lake Storage Primer
 
-
-
 ---
 
 <!-- _header: Columnar Data -->
@@ -210,14 +236,19 @@ rowset.fetch_df()
 
 ---
 
+<!-- _class: lead -->
+![bg left:25%](https://picsum.photos/506/)
+### On to Level Two - Parquet
+
+---
+
 <!-- _header: NYC Taxi Data -->
 <!-- _footer: From: https://registry.opendata.aws/nyc-tlc-trip-records-pds/-->
 
 <!-- _backgroundColor: white -->
 
 
-![bg right:40%](./nyctaxi.png)
-![width:400](./awsnyc.png)
+![bg left:55% fit](./awsnyc.png)
 
 ``` bash
 aws s3 ls "s3://nyc-tlc/"
@@ -283,6 +314,46 @@ rowset.description
 ---
 
 ``` python
+
+sql = """
+SELECT 
+  * 
+FROM 
+  './data/yellow_tripdata_2022-10.parquet'
+LIMIT 1;
+"""
+rowset = cursor.execute(sql)
+
+print(rowset.fetch_df().T.to_markdown())
+```
+
+---
+<style scoped>section { font-size: 18px; }</style>
+
+|                       | 0                   |
+|:----------------------|:--------------------|
+| VendorID              | 1                   |
+| tpep_pickup_datetime  | 2022-10-01 00:03:41 |
+| tpep_dropoff_datetime | 2022-10-01 00:18:39 |
+| passenger_count       | 1.0                 |
+| trip_distance         | 1.7                 |
+| RatecodeID            | 1.0                 |
+| store_and_fwd_flag    | N                   |
+| PULocationID          | 249                 |
+| DOLocationID          | 107                 |
+| payment_type          | 1                   |
+| fare_amount           | 9.5                 |
+| extra                 | 3.0                 |
+| mta_tax               | 0.5                 |
+| tip_amount            | 2.65                |
+| tolls_amount          | 0.0                 |
+| improvement_surcharge | 0.3                 |
+| total_amount          | 15.95               |
+| congestion_surcharge  | 2.5                 |
+| airport_fee           | 0.0                 |
+---
+
+``` python
 sql = """
     SELECT
     DATE_PART('hour', tpep_pickup_datetime) as dropoff_hour,
@@ -300,7 +371,7 @@ rowset = cursor.execute(sql)
 print(rowset.fetch_df().to_markdown())
 ```
 ---
-<style scoped>section { font-size: 14px; }</style>
+<style scoped>section { font-size: 16px; }</style>
 
 |    |   dropoff_hour |   trip_count |   avg_fare_amount |   avg_tip_pct |
 |---:|---------------:|-------------:|------------------:|--------------:|
@@ -330,6 +401,12 @@ print(rowset.fetch_df().to_markdown())
 | 23 |             23 |       149113 |             16.07 |         18.84 |
 
 ---
+
+<!-- _class: lead -->
+![bg left:25%](https://picsum.photos/507/)
+### Finallly, Level 3 - Parquet on S3 (/Cloud Storage)
+
+---
 <!-- _header: level three -->
 
 ``` python
@@ -337,7 +414,7 @@ import duckdb
 cursor = duckdb.connect()
 cursor.execute("INSTALL httpfs;")
 cursor.execute("LOAD httpfs;")
-cursor.execute("SET s3_region='{aws-region-code}';")
+cursor.execute("SET s3_region='us-east-1';")
 cursor.execute("SET s3_access_key_id='****************';")
 cursor.execute("SET s3_secret_access_key='**********************';")
 
@@ -348,7 +425,7 @@ sql = """
 SELECT 
   COUNT(*) 
 FROM 
-  read_parquet('s3://is-sd-z001/nyctaxi/year=2022/month=10/yellow_tripdata_2022-10.parquet')
+  read_parquet('s3://is-thaipy/nyctaxi/year=2022/month=10/yellow_tripdata_2022-10.parquet')
   ;
 """
 rowset = cursor.execute(sql)
@@ -389,7 +466,7 @@ print(rowset.fetch_df().to_markdown())
 ```
 
 ---
-<style scoped>section { font-size: 14px; }</style>
+<style scoped>section { font-size: 16px; }</style>
 
 |    |   dropoff_hour |       trip_count |   avg_fare_amount |   avg_tip_pct |
 |---:|---------------:|-----------------:|------------------:|--------------:|
@@ -417,4 +494,26 @@ print(rowset.fetch_df().to_markdown())
 | 21 |             21 |      1.73885e+06 |             14.02 |         19.68 |
 | 22 |             22 |      1.60565e+06 |             14.66 |         19.48 |
 | 23 |             23 |      1.30004e+06 |             15.33 |         18.85 |
+
 ---
+<!-- _header: what to explore next -->
+
+- Writing to cloud storage with DuckDB
+- Running DuckDB serverless (in AWS Lambda?)
+
+
+- Poor Man's Data Lake (https://dagster.io/blog/duckdb-data-lake)
+---
+<!-- _footer: From: https://chat.openai.com/chat -->
+<style scoped>section { font-size: 28px; }</style>
+
+
+**Would Donald Duck use DuckDB for analytics?**
+
+It's hard to say for sure whether Donald Duck would use DuckDB for analytics, but it certainly seems like a good fit for his needs.
+
+DuckDB's column-store architecture and ability to handle big data make it well suited for data warehousing and analytics workloads. This would be especially useful for Donald Duck as he is running a business, like his famous "Donald's Boat" and he might want to analyze data about his customers, sales and revenue.
+
+Additionally, DuckDB's ability to run on embedded systems would make it easy for Donald Duck to access and analyze data on the go, whether he's on his boat or at his home.
+
+Overall, it seems like DuckDB would be a great choice for Donald Duck's analytics needs. Quack quack!
