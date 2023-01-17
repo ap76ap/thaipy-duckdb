@@ -130,3 +130,6 @@ dmypy.json
 
 # Ensure files that get build are not mistakenly committed
 public/slides/index.html
+
+# Cut out data
+data/
